@@ -8,7 +8,8 @@ const app = express();
 const httpServer = createServer(app);
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); 
+
 
 const msgHistory = [];
 
@@ -43,9 +44,16 @@ io.on("connection", (socket) => {
 
   socket.emit("serverMessage", "very nice");
 
-  socket.on("disconnect", () => {
-    console.log(`user disconnected ${socket.id}`);
-  });
+
+
+
+      socket.on('disconnect', ()=> {
+        console.log(`user disconnected ${socket.id}`);
+
+      });
+
+
+
 });
 
 httpServer.listen(PORT, () => console.log(`*** 🌡 server is up 🌡 ***${PORT}`));
