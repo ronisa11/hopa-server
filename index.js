@@ -8,8 +8,7 @@ const app = express();
 const httpServer = createServer(app);
 
 app.use(cors());
-app.use(express.json()); 
-
+app.use(express.json());
 
 const msgHistory = [];
 
@@ -31,29 +30,27 @@ io.on("connection", (socket) => {
   const finalId = idFromServer();
   socket.emit("idToUser", finalId);
 
-  socket.on("clientMessage", (content) => {
+  socket.on("clientMessage", (messageObject) => {
+    // כאן אנו מניחים ש-messageObject הוא האובייקט שנשלח מהלקוח
+    const { content, sender, time } = messageObject; // פירוק האובייקט למשתנים
     const msg = {
-      content: content,
-      sender: finalId,
-      time: new Date().toISOString(),
+      content, // שימוש בערכים שפורקו מהאובייקט
+      sender,
+      time,
     };
     msgHistory.push(msg);
-    console.log("Received message:", socket.id, ":", msg, msgHistory);
+    console.log("Received message:", socket.id, ":", msg);
     io.emit("newMessage", msg);
   });
+  
 
   socket.emit("serverMessage", "very nice");
 
-
-
-
-      socket.on('disconnect', ()=> {
-        console.log(`user disconnected ${socket.id}`);
-
-      });
-
-
-
+  socket.on("disconnect", () => {
+    console.log(`user disconnected ${socket.id}`);
+  });
 });
+
+
 
 httpServer.listen(PORT, () => console.log(`*** 🌡 server is up 🌡 ***${PORT}`));
